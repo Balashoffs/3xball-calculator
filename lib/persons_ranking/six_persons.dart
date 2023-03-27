@@ -1,4 +1,11 @@
-class SevenPersons {
+/*
+	1 4      1 2     1 2     1 2     1 3     2 1     2 1     2 1      3 1     3 1
+	2 5      3 5     4 3     5 3     6 4     3 5     4 3     5 3      4 2     5 2
+  3 6      4 6     5 6     6 4     2 5     4 6     5 6     6 4      5 6     6 4
+тройка 1,4,6 и 3,4,7 повторились.
+*/
+
+class SixPersons {
   static final Map<String, List<int>> _match1 = {
     "home": [1, 2, 5],
     "away": [3, 4, 6]
@@ -47,7 +54,18 @@ class SevenPersons {
     "home": [1, 4, 6],
     "away": [2, 3, 5]
   };
-  static final List<Map<String, List<int>>> allMatches =[
-    _match1, _match2, _match3,_match4,_match5,_match6,_match7,_match8,_match9,_match10,_match11,_match12,
+  static final List<Map<String, List<int>>> allMatches = [
+    _match1,
+    _match2,
+    _match3,
+    _match4,
+    _match5,
+    _match6,
+    _match7,
+    _match8,
+    _match9,
+    _match10,
+    _match11,
+    _match12,
   ];
 }

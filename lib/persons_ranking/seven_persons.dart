@@ -1,0 +1,71 @@
+///
+/// Осталось подставить 5 6 и 7. В приоритете пары 1,2 1,3 и 2,3. Остальные могут повторяться.
+// 	 (7)      (6)     (5)     (3)     (4)     (2)     (1)     (3)     (4)     (5)     (6)     (7)
+// 	1 3      1 2     1 2     1 4     1 2     1 3     2 3     1 2     1 2     1 3     1 2     1 2
+// 	2 4      3 4     4 3     2 5     3 5     4 5     5 4     5 4     5 3     2 4     3 4     4 3
+//  5 6      7 5     7 6     7 6     6 7     6 7     6 7     7 6     6 7     6 7     5 7     6 5
+// тройка 1,4,6 и 3,4,7 повторились.
+///
+
+final Map<String, List<int>> _match1 = {
+  "home": [1, 2, 5],
+  "away": [3, 4, 6]
+};
+final Map<String, List<int>> _match2 = {
+  "home": [1, 3, 7],
+  "away": [2, 4, 5]
+};
+final Map<String, List<int>> _match3 = {
+  "home": [1, 4, 7],
+  "away": [2, 3, 6]
+};
+final Map<String, List<int>> _match4 = {
+  "home": [1, 2, 7],
+  "away": [4, 5, 6]
+};
+final Map<String, List<int>> _match5 = {
+  "home": [1, 3, 6],
+  "away": [2, 5, 7]
+};
+final Map<String, List<int>> _match6 = {
+  "home": [1, 4, 6],
+  "away": [3, 5, 7]
+};
+final Map<String, List<int>> _match7 = {
+  "home": [2, 5, 6],
+  "away": [3, 4, 7]
+};
+final Map<String, List<int>> _match8 = {
+  "home": [1, 5, 7],
+  "away": [2, 4, 6]
+};
+final Map<String, List<int>> _match9 = {
+  "home": [1, 5, 6],
+  "away": [2, 3, 7]
+};
+final Map<String, List<int>> _match10 = {
+  "home": [1, 2, 6],
+  "away": [3, 4, 7]
+};
+final Map<String, List<int>> _match11 = {
+  "home": [1, 3, 5],
+  "away": [2, 4, 7]
+};
+final Map<String, List<int>> _match12 = {
+  "home": [1, 4, 6],
+  "away": [2, 3, 5]
+};
+final List<Map<String, List<int>>> allMatches = [
+  _match1,
+  _match2,
+  _match3,
+  _match4,
+  _match5,
+  _match6,
+  _match7,
+  _match8,
+  _match9,
+  _match10,
+  _match11,
+  _match12,
+];
