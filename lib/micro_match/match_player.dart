@@ -16,8 +16,8 @@ class MatchPlayer implements IPlayer {
       : _pos = pos,
         _fullName = fullName,
         _range = range,
-        _matchesQnt = matchesQnt,
-        _partOfRange = fee(matchesQnt, range);
+        _matchesQnt = matchesQnt ?? 0,
+        _partOfRange = matchesQnt == null ? 0 :fee(matchesQnt, range);
 
   MatchPlayer copyWith(
           {int? pos, String? fullName, int? range, int? matchesQnt}) =>
@@ -58,4 +58,15 @@ class MatchPlayer implements IPlayer {
   int? getPos() {
     return _pos;
   }
+
+  @override
+  String toString() {
+    return 'MatchPlayer{$_pos, $_fullName, $_range,  $_matchesQnt, $_partOfRange, $partOfRangeAtPercent, $points}';
+  }
+
+  String toPlayer() {
+    return 'MatchPlayer{$_pos, $_fullName, $_range}';
+  }
+
+
 }

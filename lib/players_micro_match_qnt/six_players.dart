@@ -6,8 +6,8 @@
 
 class SixPlayers {
   static final Map<String, List<int>> _match1 = {
-    "home": [1, 2, 5],
-    "away": [3, 4, 6]
+    "home": [1, 2, 3],
+    "away": [4, 5, 6]
   };
   static final Map<String, List<int>> _match2 = {
     "home": [1, 3, 4],
