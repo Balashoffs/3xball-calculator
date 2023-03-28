@@ -4,7 +4,7 @@
    3 6      4 6      5 6      4 6      5 6      6 5      5 6      6 5      6 5      6 4
 */
 
-class SixPersons {
+class SixPlayers {
   static final Map<String, List<int>> _match1 = {
     "home": [1, 2, 5],
     "away": [3, 4, 6]

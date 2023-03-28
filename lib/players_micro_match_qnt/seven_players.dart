@@ -5,7 +5,7 @@
 
 */
 
-class SevenPersons {
+class SevenPlayers {
   static final Map<String, List<int>> _match1 = {
     "home": [1, 2, 5],
     "away": [3, 4, 6]

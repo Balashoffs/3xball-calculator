@@ -7,7 +7,7 @@
   Повторов нет.
 */
 
-class EightPersons {
+class EightPlayers {
   static final Map<String, List<int>> _match1 = {
     "home": [2, 6, 8],
     "away": [3, 4, 7]
