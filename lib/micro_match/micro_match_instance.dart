@@ -1,11 +1,10 @@
-import 'package:rf_core/micro_match_triple.dart';
 
-import 'match_consts.dart';
+import 'match_utils.dart';
+import 'micro_match_triple.dart';
 
 class MicroMatch {
   final MicroMatchTriple homeTriple;
   final MicroMatchTriple awayTriple;
-
 
   MicroMatch(this.homeTriple, this.awayTriple);
 
@@ -16,5 +15,10 @@ class MicroMatch {
       return 1;
     }
     return delta > 0 ? matchesPoints[deltaAbs]! : matchesPoints[deltaAbs]! * -1;
+  }
+
+  int? calculateMatchPoints() {
+    int delta = homeTriple.microMatchPoints - awayTriple.microMatchPoints;
+    return delta.abs();
   }
 }
