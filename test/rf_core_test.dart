@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rf_core/micro_match/micro_match.dart';
-import 'package:rf_core/range_calculator.dart';
+import 'package:rf_core/judge.dart';
 
 void main() {
   test('calculate range for 6 players', () {
+    debugPrint("Расчет для 6 игроков");
     MatchPlayer matchPlayer1 =
         MatchPlayer(pos: 1, fullName: 'Аваков', range: 2105);
     MatchPlayer matchPlayer2 =
@@ -39,21 +41,24 @@ void main() {
       matchPlayer6
     ];
 
-    final calculator = RangeCalculator(players: players);
+    final match = Judge(players: players);
     for (var result in microMatchResults) {
-      MicroMatch? mm = calculator.getNextMicroMatchPair();
+      MicroMatch? mm = match.getNextMicroMatchPair();
       mm?.setResult(result[0], result[1]);
-      calculator.updatePlayerPointAfterMatch(mm!);
+      match.updatePlayerPointAfterMatch(mm!);
     }
-    print("\n");
-    List<IPlayer>? updatePlayerResults = calculator.calculateResults();
-    updatePlayerResults?.sort((a, b) => b.getRange()! - a.getRange()!);
-    updatePlayerResults?.forEach((element) {
-      print(element);
+    List<IPlayer>? updatePlayerResults = match.calculateResults();
+    debugPrint("\nИтого:");
+    updatePlayerResults?.forEach((player) {
+      debugPrint(
+          '${player.getPos()}. ${player.getFullName()}\t\t\t${player.getRange()}');
     });
+    debugPrint("________________________\n");
+
   });
 
   test('calculate range for 7 players', () {
+    debugPrint("Расчет для 7 игроков");
     MatchPlayer matchPlayer1 =
         MatchPlayer(pos: 1, fullName: 'Иванов', range: 2567);
     MatchPlayer matchPlayer2 =
@@ -94,28 +99,25 @@ void main() {
       matchPlayer7
     ];
 
-    players.forEach((element) {
-      print(element);
-    });
 
-    print("\n");
-
-    final calculator = RangeCalculator(players: players);
+    final match = Judge(players: players);
     for (var result in microMatchResults) {
-      MicroMatch? mm = calculator.getNextMicroMatchPair();
+      MicroMatch? mm = match.getNextMicroMatchPair();
       mm?.setResult(result[0], result[1]);
-      calculator.updatePlayerPointAfterMatch(mm!);
+      match.updatePlayerPointAfterMatch(mm!);
     }
 
-    List<IPlayer>? updatePlayerResults = calculator.calculateResults();
-    print("\n");
-    updatePlayerResults?.sort((a, b) => b.getRange()! - a.getRange()!);
-    updatePlayerResults?.forEach((element) {
-      print(element);
+    List<IPlayer>? updatePlayerResults = match.calculateResults();
+    debugPrint("\nИтого:");
+    updatePlayerResults?.forEach((player) {
+      debugPrint(
+          '${player.getPos()}. ${player.getFullName()}\t\t\t${player.getRange()}');
     });
+    debugPrint("________________________\n");
   });
 
   test('calculate range for 8 players', () {
+    debugPrint("Расчет для 8 игроков");
     MatchPlayer matchPlayer1 =
         MatchPlayer(pos: 1, fullName: 'Крутов', range: 2476);
     MatchPlayer matchPlayer2 =
@@ -159,22 +161,23 @@ void main() {
       matchPlayer8,
     ];
 
-    final calculator = RangeCalculator(players: players);
+    final match = Judge(players: players);
     for (var result in microMatchResults) {
-      MicroMatch? mm = calculator.getNextMicroMatchPair();
+      MicroMatch? mm = match.getNextMicroMatchPair();
       mm?.setResult(result[0], result[1]);
-      calculator.updatePlayerPointAfterMatch(mm!);
+      match.updatePlayerPointAfterMatch(mm!);
     }
-    print("\n");
-    List<IPlayer>? updatePlayerResults = calculator.calculateResults();
-    print("\n");
-    updatePlayerResults?.sort((a, b) => b.getRange()! - a.getRange()!);
-    updatePlayerResults?.forEach((element) {
-      print(element);
+    List<IPlayer>? updatePlayerResults = match.calculateResults();
+    debugPrint("\nИтого:");
+    updatePlayerResults?.forEach((player) {
+      debugPrint(
+          '${player.getPos()}. ${player.getFullName()}\t\t\t${player.getRange()}');
     });
+    debugPrint("________________________\n");
   });
 
   test('calculate range for 9 players', () {
+    debugPrint("Расчет для 9 игроков");
     MatchPlayer matchPlayer1 =
         MatchPlayer(pos: 1, fullName: 'Месси', range: 2530);
     MatchPlayer matchPlayer2 =
@@ -224,19 +227,19 @@ void main() {
       matchPlayer9,
     ];
 
-    final calculator = RangeCalculator(players: players);
+    final match = Judge(players: players);
     for (var result in microMatchResults) {
-      MicroMatch? mm = calculator.getNextMicroMatchPair();
+      MicroMatch? mm = match.getNextMicroMatchPair();
       mm?.setResult(result[0], result[1]);
-      calculator.updatePlayerPointAfterMatch(mm!);
+      match.updatePlayerPointAfterMatch(mm!);
     }
 
-    print("\n");
-    List<IPlayer>? updatePlayerResults = calculator.calculateResults();
-    print("\n");
-    updatePlayerResults?.sort((a, b) => b.getRange()! - a.getRange()!);
-    updatePlayerResults?.forEach((element) {
-      print(element);
+    List<IPlayer>? updatePlayerResults = match.calculateResults();
+    debugPrint("\nИтого:");
+    updatePlayerResults?.forEach((player) {
+      debugPrint(
+          '${player.getPos()}. ${player.getFullName()}\t\t\t${player.getRange()}');
     });
+    debugPrint("________________________\n");
   });
 }

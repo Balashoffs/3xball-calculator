@@ -17,12 +17,12 @@ class NinePlayers {
     "away": [3, 4, 9]
   };
   static final Map<String, List<int>> _match3 = {
-    "home": [1, 7, 9],
-    "away": [3, 5, 8]
+    "home": [1, 5, 6],
+    "away": [2, 4, 7]
   };
   static final Map<String, List<int>> _match4 = {
-    "home": [2, 7, 9],
-    "away": [4, 6, 8]
+    "home": [1, 7, 9],
+    "away": [3, 5, 8]
   };
 
   static final Map<String, List<int>> _match5 = {

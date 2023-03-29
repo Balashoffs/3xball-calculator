@@ -1,16 +1,12 @@
 //за каждый матч персонального рейтинга вкладываются
 import 'dart:math';
 
-double _inputPercentOfPersonalRate = 0.02;
+
 
 final Map<int, int> matchesPoints = {2: 3, 1: 2, 0: 1};
 
-int? fee(int matchesQnt, int range) {
-  double fee = _inputPercentOfPersonalRate * matchesQnt * range;
-  double fraction = fee - fee.truncate();
-  int plusOne = fraction.compareTo(0.5) >= 0 ? 0 : 1;
-  return fraction.compareTo(0.0) != 0 ? fee.round() + plusOne : fee.round();
-}
+
+
 
 Map<int, int> calculatePlayersMicroMatchQnt(
     List<Map<String, List<int>>> allMatches) {

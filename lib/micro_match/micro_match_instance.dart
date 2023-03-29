@@ -1,5 +1,4 @@
-
-import 'match_utils.dart';
+import '../match/match_utils.dart';
 import 'micro_match_triple.dart';
 
 class MicroMatch {
