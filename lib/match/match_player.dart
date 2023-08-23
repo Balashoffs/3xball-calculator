@@ -1,30 +1,48 @@
 import 'package:rf_core/i_player.dart';
 
 class MatchPlayer implements IPlayer {
+  static int? matchBallsSum;
   final int? _pos;
-  final String? _fullName;
+  final String? _lastName;
+  final String? _firstName;
   final int? _range;
+  late final int? startFee;
+  late final int? endFee;
+  late final double? endFraction;
+  late final double? matchBallsAsPercent;
+  int? additionalFee = 0;
 
-
-  MatchPlayer({pos, fullName, range, matchesQnt})
+  MatchPlayer({pos, lastName, firstName, range, matchesQnt})
       : _pos = pos,
-        _fullName = fullName,
+        _lastName = lastName,
+        _firstName = firstName,
         _range = range;
 
-  MatchPlayer copyWith(
-          {int? pos, String? fullName, int? range}) {
-   return MatchPlayer(
-          pos: pos ?? _pos,
-          fullName: fullName ?? _fullName,
-          range: range ?? _range);
- }
+  MatchPlayer copyWith({
+    int? pos,
+    String? lastName,
+    String? firstName,
+    int? range,
+  }) {
+    return MatchPlayer(
+      pos: pos ?? _pos,
+      lastName: lastName ?? _lastName,
+      firstName: firstName ?? _firstName,
+      range: range ?? _range,
+    );
+  }
 
 
   @override
-  String? getFullName() => _fullName;
+  String? getFirstName() => _firstName;
+
+  @override
+  String? getLastName() => _lastName;
 
   @override
   int? getRange() => _range;
+
+  int? getNewRange() => _range! - startFee! + endFee! + additionalFee!;
 
 
   @override
@@ -32,12 +50,16 @@ class MatchPlayer implements IPlayer {
       identical(this, other) ||
       other is MatchPlayer &&
           runtimeType == other.runtimeType &&
-          _fullName == other._fullName &&
+          _pos == other._pos &&
+          _lastName == other._lastName &&
+          _firstName == other._firstName &&
           _range == other._range;
 
   @override
   int get hashCode =>
-      _fullName.hashCode ^
+      _pos.hashCode ^
+      _lastName.hashCode ^
+      _firstName.hashCode ^
       _range.hashCode;
 
   @override
@@ -47,6 +69,7 @@ class MatchPlayer implements IPlayer {
 
   @override
   String toString() {
-    return 'MatchPlayer{$_pos, $_fullName, $_range}';
+    return 'MatchPlayer{$_pos, $_lastName, $_range}';
   }
 }
+

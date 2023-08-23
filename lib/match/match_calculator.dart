@@ -1,27 +1,23 @@
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
-import 'package:rf_core/match/match_setup.dart';
 import 'package:rf_core/micro_match/micro_match.dart';
-
 import 'match_utils.dart';
 import 'match_keeper.dart';
 
 class MatchCalculator {
   final int _totalBalls;
-  final List<PlayerMatchOdds> _playersMatchOdds;
   final Map<int, int> _matchesResult;
   final Map<int, MatchPlayer> _playersAtMatch;
   final Map<int, int> _playerMatchesPoints;
 
   MatchCalculator(MatchKeeper keeper)
-      : _totalBalls = keeper.matchSetup!.matchBallsSum,
-        _playersMatchOdds = keeper.matchSetup!.playersMatchOdds,
+      : _totalBalls = MatchPlayer.matchBallsSum!,
         _matchesResult = keeper.matchesResult,
         _playersAtMatch = keeper.playersAtMatch,
         _playerMatchesPoints = keeper.playerMatchesPoints;
 
-  List<IPlayer> calculateResults() {
+  List<IPlayer>? calculateResults() {
     int? totalPoints = _matchesResult.entries
         .map((e) => {
               e.key == 2
@@ -39,36 +35,73 @@ class MatchCalculator {
 
     debugPrint('Стоимость каждого очка $_totalBalls/$totalPoints = $pointCost');
 
-    Map<int, int> updateBalls = {};
-
-    List<IPlayer> updatePlayers =
-        _playersAtMatch.values.map((MatchPlayer player) {
+    _playersAtMatch.values.map((player) {
       int pos = player.getPos()!;
-      int newBalls = (_playerMatchesPoints[pos]! * pointCost).round();
-      int? oldMatchBall = _playersMatchOdds[pos - 1].matchBalls;
-      int updateRange = player.getRange()! - oldMatchBall! + newBalls;
-      updateBalls[pos] =newBalls;
+      double newBallsD = roundDouble(_playerMatchesPoints[pos]! * pointCost, 2);
+      int endFee = newBallsD.truncate();
+      double fraction = newBallsD - endFee;
+      int? oldMatchBall = player.startFee;
+      int updateRange = player.getRange()! - oldMatchBall! + endFee;
+      player.endFee = endFee;
+      player.endFraction = roundDouble(fraction, 2);
       debugPrint(
-          '${player.getPos()}. ${player.getFullName()}\t\t\t${player.getRange()} - $oldMatchBall * $newBalls = $updateRange');
-      return player.copyWith(range: updateRange);
+          '${player.getPos()}. ${player.getFirstName()}\t\t\t${player.getRange()} - $oldMatchBall * $endFee ($newBallsD -> $endFee ${player.endFraction}) = $updateRange');
     }).toList();
-    test(_playersAtMatch, _playersMatchOdds, updatePlayers, updateBalls);
-    updatePlayers.sort((r1, r2) => r2.getRange()! - r1.getRange()!);
 
-    return updatePlayers;
+    int delta = checkOnChangeRange(_playersAtMatch);
+    if (delta > 0) {
+      addAdditionalFee(_playersAtMatch, delta);
+    }
+    test(_playersAtMatch);
+
+    List<IPlayer>? updatedPlayers = _playersAtMatch.values
+        .map((e) => e.copyWith(range: e.getNewRange()!))
+        .toList();
+    updatedPlayers.sort((r1, r2) => r2.getRange()! - r1.getRange()!);
+    return updatedPlayers;
   }
 
-  void test(Map<int, MatchPlayer> playersAtMatch, List<PlayerMatchOdds> playersMatchOdds, List<IPlayer> updatePlayers, Map<int, int> updateBalls) {
-    int totalOldRange = playersAtMatch.values.map((e) => e.getRange()).fold(0, (p, c) => p + c!);
-    int oldBalls = playersMatchOdds.map((e) => e.matchBalls).fold(0, (previousValue, element) => previousValue + element!);
-    int totalNewRange = updatePlayers.map((e) => e.getRange()).fold(0, (p, c) => p + c!);
-    int newBalls = updateBalls.values.fold(0, (previousValue, element) => previousValue + element);
+  int checkOnChangeRange(Map<int, MatchPlayer> playersAtMatch) {
+    int totalNewRange = playersAtMatch.values
+        .map((e) => e.endFee!)
+        .fold(0, (p, c) => p + c);
+    int totalOldRange = playersAtMatch.values
+        .map((e) => e.startFee!)
+        .fold(0, (p, c) => p + c);
+    return (totalNewRange - totalOldRange).abs();
+  }
+
+  void test(
+    Map<int, MatchPlayer> playersAtMatch,
+  ) {
+    int totalOldRange = playersAtMatch.values
+        .map((e) => e.getRange())
+        .fold(0, (p, c) => p + c!);
+    int startFees = playersAtMatch.values
+        .map((e) => e.startFee)
+        .fold(0, (previousValue, element) => previousValue + element!);
+    int endFees = playersAtMatch.values
+        .map((e) => e.endFee)
+        .fold(0, (p, c) => p + c!);
+    int totalNewRange = playersAtMatch.values.map((e) => e.getNewRange())
+        .fold(0, (previousValue, element) => previousValue + element!);
     debugPrint(
-        'Всего \t\t\t$totalOldRange - $oldBalls + $newBalls = $totalNewRange');
+        'Всего \t\t\t$totalOldRange - $startFees + $endFees = $totalNewRange');
   }
 
+  void addAdditionalFee(Map<int, MatchPlayer> playersAtMatch, int delta) {
+    List<MatchPlayer> mps = playersAtMatch.values.toList();
+    mps.sort((a, b) {
+      double aD = a.endFraction!;
+      double bD = b.endFraction!;
+      return bD.compareTo(aD);
+    });
 
-
-
-
+    for (int i = 0; i < delta; i++) {
+      MatchPlayer? mp = playersAtMatch[mps[i+1].getPos()];
+      mp?.additionalFee = 1;
+      debugPrint(
+          '${mp?.getPos()}. ${mp?.getFirstName()} (${mp?.endFraction})  + 1 балл ');
+    }
+  }
 }

@@ -1,5 +1,6 @@
 abstract class IPlayer{
-  String? getFullName();
+  String? getFirstName();
+  String? getLastName();
   int? getRange();
   int? getPos();
 
