@@ -6,8 +6,7 @@ import 'match_utils.dart';
 import '../micro_match/micro_match_instance.dart';
 import '../micro_match/micro_match_triple.dart';
 
-class MatchKeeper{
-  MatchSetup? matchSetup;
+class MatchKeeper {
   int _currentMatchIndex = 0;
 
   late final Map<int, MatchPlayer> playersAtMatch = {};
@@ -16,19 +15,16 @@ class MatchKeeper{
   final Map<int, int> playerMatchesPoints = {};
   final Map<int, int> matchesResult = {2: 0, 1: 0, 0: 0};
 
-
-  MatchKeeper(List<IPlayer> players, List<Map<String, List<int>>> allMatches){
-    _allMatches = allMatches;
-    matchSetup = MatchSetup(players);
-
+  MatchKeeper(List<IPlayer> players, List<Map<String, List<int>>> allMatches) {
     var playersMicroMatchQnt = calculatePlayersMicroMatchQnt(allMatches);
 
     players
         .map((player) => MatchPlayer(
-        pos: player.getPos(),
-        fullName: player.getFullName(),
-        range: player.getRange(),
-        matchesQnt: playersMicroMatchQnt[player.getPos()]))
+            pos: player.getPos(),
+            firstName: player.getFirstName(),
+            lastName: player.getLastName(),
+            range: player.getRange(),
+            matchesQnt: playersMicroMatchQnt[player.getPos()]))
         .forEach((player) {
       playersAtMatch[player.getPos()!] = player;
     });
@@ -36,6 +32,9 @@ class MatchKeeper{
     for (var player in playersAtMatch.values) {
       playerMatchesPoints[player.getPos()!] = 0;
     }
+
+    _allMatches = allMatches;
+    PlayerFeeCalculator.calculate(playersAtMatch);
   }
 
   MicroMatch getNextMicroMatchPair() {
