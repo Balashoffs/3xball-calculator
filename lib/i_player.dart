@@ -3,5 +3,6 @@ abstract class IPlayer{
   String? getLastName();
   int? getRange();
   int? getPos();
-
+  int? getTourneyScore();
+ void setTourneyScore(int score);
 }
