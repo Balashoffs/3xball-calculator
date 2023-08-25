@@ -24,6 +24,7 @@ class MatchKeeper {
             firstName: player.getFirstName(),
             lastName: player.getLastName(),
             range: player.getRange(),
+            score: 0,
             matchesQnt: playersMicroMatchQnt[player.getPos()]))
         .forEach((player) {
       playersAtMatch[player.getPos()!] = player;
@@ -57,6 +58,7 @@ class MatchKeeper {
       List<int> allPos = microMatch.getAllPosAtMicroMatch();
       for (var pos in allPos) {
         playerMatchesPoints.update(pos, (value) => value + points);
+        playersAtMatch.forEach((key, value) => value.setTourneyScore(1));
       }
     } else {
       points > 0
@@ -72,6 +74,7 @@ class MatchKeeper {
     for (var player in triple.players) {
       points = points.abs();
       playerMatchesPoints.update(player.getPos()!, (value) => value + points);
+      player.setTourneyScore(points);
     }
   }
 }
