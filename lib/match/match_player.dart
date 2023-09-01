@@ -53,7 +53,7 @@ class MatchPlayer implements IPlayer {
   @override
   int getRange() => _range;
 
-  int getNewRange() => _range! - startFee! + endFee! + additionalFee!;
+  int getNewRange() => _range - startFee! + endFee! + additionalFee;
 
   @override
   int getPos() {
