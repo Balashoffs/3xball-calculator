@@ -8,6 +8,7 @@ import '../micro_match/micro_match_triple.dart';
 
 class MatchKeeper {
   int _currentMatchIndex = 0;
+  int _totalMatches = 0;
 
   late final Map<int, MatchPlayer> playersAtMatch = {};
   late final List<Map<String, List<int>>> _allMatches;
@@ -16,6 +17,7 @@ class MatchKeeper {
   final Map<int, int> matchesResult = {2: 0, 1: 0, 0: 0};
 
   MatchKeeper(List<IPlayer> players, List<Map<String, List<int>>> allMatches) {
+    _totalMatches = allMatches.length;
     var playersMicroMatchQnt = calculatePlayersMicroMatchQnt(allMatches);
 
     players
@@ -38,13 +40,17 @@ class MatchKeeper {
     PlayerFeeCalculator.calculate(playersAtMatch);
   }
 
-  MicroMatch getNextMicroMatchPair() {
+  MicroMatch? getNextMicroMatchPair() {
+    int nextIndex = _currentMatchIndex + 1;
+    if (_totalMatches <= nextIndex) {
+      return null;
+    }
     Map<String, List<int>> triples = _allMatches[_currentMatchIndex];
-    List<MatchPlayer>? homes = _getTriples(triples['home']!);
+    List<MatchPlayer> homes = _getTriples(triples['home'] ?? []) ;
     MicroMatchTriple homeTriple = MicroMatchTriple('home', homes);
-    List<MatchPlayer> aways = _getTriples(triples['away']!);
+    List<MatchPlayer> aways = _getTriples(triples['away'] ?? []);
     MicroMatchTriple awayTriple = MicroMatchTriple('away', aways);
-    _currentMatchIndex = _currentMatchIndex + 1;
+    _currentMatchIndex = nextIndex;
     return MicroMatch(homeTriple, awayTriple, _currentMatchIndex);
   }
 
@@ -73,7 +79,7 @@ class MatchKeeper {
   void _updateMatchPoints(MicroMatchTriple triple, int points) {
     for (var player in triple.players) {
       points = points.abs();
-      playerMatchesPoints.update(player.getPos()!, (value) => value + points);
+      playerMatchesPoints.update(player.getPos(), (value) => value + points);
       player.setScore(points);
     }
   }
