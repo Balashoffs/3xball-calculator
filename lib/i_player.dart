@@ -4,5 +4,6 @@ abstract class IPlayer{
   int getRange();
   int getPos();
   int getMatchesQnt();
+  int getScore();
  void setScore(int score);
 }
