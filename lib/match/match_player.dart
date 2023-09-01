@@ -36,7 +36,7 @@ class MatchPlayer implements IPlayer {
 
   late final double? matchBallsAsPercent;
 
-  MatchPlayer({pos, lastName, firstName, range, matchesQnt, score})
+  MatchPlayer({pos, lastName, firstName, range, matchesQnt = 0, score})
       : _pos = pos,
         _lastName = lastName,
         _firstName = firstName,
