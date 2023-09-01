@@ -21,12 +21,7 @@ class MatchKeeper {
     var playersMicroMatchQnt = calculatePlayersMicroMatchQnt(allMatches);
 
     players
-        .map((player) => MatchPlayer(
-            pos: player.getPos(),
-            firstName: player.getFirstName(),
-            lastName: player.getLastName(),
-            range: player.getRange(),
-            score: 0,
+        .map((player) => (player as MatchPlayer).copyWith(
             matchesQnt: playersMicroMatchQnt[player.getPos()]))
         .forEach((player) {
       playersAtMatch[player.getPos()] = player;
