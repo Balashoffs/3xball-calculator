@@ -1,6 +1,6 @@
 name: rf_core
 description: rf_core
-version: 0.0.1+5
+version: 0.0.1+6
 
 
 environment:
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  uuid: ^4.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
