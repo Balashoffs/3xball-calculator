@@ -18,8 +18,8 @@ class Judge {
     return _mathKeeper.getNextMicroMatchPair();
   }
 
-  void updatePlayerPointAfterMatch(MicroMatch microMatch) {
-    _mathKeeper.updatePlayerPointAfterMatch(microMatch);
+  Map<int, int> updatePlayerPointAfterMatch(MicroMatch microMatch) {
+    return _mathKeeper.updatePlayerPointAfterMatch(microMatch);
   }
 
   List<IPlayer>? calculateResults() {

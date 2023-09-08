@@ -53,7 +53,7 @@ class MatchKeeper {
     return pairs.map((int e) => playersAtMatch[e] as MatchPlayer).toList();
   }
 
-  void updatePlayerPointAfterMatch(MicroMatch microMatch) {
+   Map<int, int> updatePlayerPointAfterMatch(MicroMatch microMatch) {
     int? points = microMatch.calculateWinPoints();
     if (points! == 1) {
       List<int> allPos = microMatch.getAllPosAtMicroMatch();
@@ -69,6 +69,8 @@ class MatchKeeper {
 
     int? matchPoints = microMatch.calculateMatchPoints();
     matchesResult.update(matchPoints!, (value) => ++value);
+
+    return playerMatchesPoints;
   }
 
   void _updateMatchPoints(MicroMatchTriple triple, int points) {
