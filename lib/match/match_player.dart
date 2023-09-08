@@ -7,6 +7,8 @@ class MatchPlayer implements IPlayer {
   /// Позиция игрока в турнире
   final int _pos;
 
+  final String _id;
+
   /// Фамилия игрока
   final String _lastName;
 
@@ -33,11 +35,11 @@ class MatchPlayer implements IPlayer {
   ///Дробная часть от [endFee]
   late final double? endFraction;
 
-
   late final double? matchBallsAsPercent;
 
-  MatchPlayer({pos, lastName, firstName, range, matchesQnt = 0, score})
+  MatchPlayer({id, pos, lastName, firstName, range, matchesQnt = 0, score})
       : _pos = pos,
+        _id = id,
         _lastName = lastName,
         _firstName = firstName,
         _score = score,
@@ -54,6 +56,11 @@ class MatchPlayer implements IPlayer {
   int getRange() => _range;
 
   int getNewRange() => _range - startFee! + endFee! + additionalFee;
+
+  @override
+  String getId() {
+    return _id;
+  }
 
   @override
   int getPos() {
@@ -77,6 +84,7 @@ class MatchPlayer implements IPlayer {
 
   MatchPlayer copyWith({
     int? pos,
+    String? id,
     String? lastName,
     String? firstName,
     int? range,
@@ -85,6 +93,7 @@ class MatchPlayer implements IPlayer {
   }) {
     return MatchPlayer(
       pos: pos ?? _pos,
+      id: id ?? _id,
       lastName: lastName ?? _lastName,
       firstName: firstName ?? _firstName,
       range: range ?? _range,
@@ -99,6 +108,7 @@ class MatchPlayer implements IPlayer {
       _lastName.hashCode ^
       _firstName.hashCode ^
       _range.hashCode ^
+      _id.hashCode ^
       _score.hashCode;
 
   @override
@@ -110,10 +120,11 @@ class MatchPlayer implements IPlayer {
           _lastName == other._lastName &&
           _firstName == other._firstName &&
           _range == other._range &&
+          _id == other._id &&
           _score == other._score;
 
   @override
   String toString() {
-    return 'MatchPlayer{_pos: $_pos, _lastName: $_lastName, _firstName: $_firstName, _range: $_range, _matchesQnt: $_matchesQnt, _score: $_score, startFee: $startFee, endFee: $endFee, endFraction: $endFraction, matchBallsAsPercent: $matchBallsAsPercent, additionalFee: $additionalFee}';
+    return 'MatchPlayer{_pos: $_pos, _id: $_id, _lastName: $_lastName, _firstName: $_firstName, _range: $_range, _matchesQnt: $_matchesQnt, _score: $_score}';
   }
 }
