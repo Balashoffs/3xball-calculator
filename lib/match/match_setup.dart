@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:rf_core/model/i_player.dart';
 import 'package:rf_core/match/match.dart';
+import 'package:rf_core/model/player_fee.dart';
 
 class PlayerFeeCalculator {
   static const double _inputPercentOfPersonalRate = 0.02;
@@ -10,38 +12,50 @@ class PlayerFeeCalculator {
     9: [10, 10, 10, 10, 10, 10, 10, 10, 10],
   };
 
-
-  static void calculate(Map<int, MatchPlayer> players) {
-    _preparePlayerOdds(players);
-    _prepareMatchOdds(players);
+  static Map<int, IPlayer> prepareForStartingTourney(Map<int, IPlayer> players) {
+    Map<String, PlayerFee> playerFees = _preparePlayerOdds(players);
+    return _prepareMatchOdds(players, playerFees);
   }
 
-  static void _preparePlayerOdds(Map<int, MatchPlayer> players) {
+  static Map<String, PlayerFee> _preparePlayerOdds(Map<int, IPlayer> players) {
     List<int>? odds = _matchOdds[players.length];
+    Map<String, PlayerFee> playerStarFees = {};
     for (var kv in players.entries) {
-      MatchPlayer player = kv.value;
-      int microMatchQnt = odds![player.getPos() - 1];
-      int? matchBalls = _fee(microMatchQnt, player.getRange());
+      IPlayer player = kv.value;
+      int index = player.getPos() - 1;
+      IUser user = kv.value.getUser();
+      int microMatchQnt = odds![index];
+      int? matchBalls = _fee(microMatchQnt, player.getUser().getRange());
       debugPrint(
-          '${player.getPos()}. ${player.getFirstName()}\t\t${player.getRange()} * $_inputPercentOfPersonalRate * $microMatchQnt = $matchBalls');
-      player.startFee = matchBalls;
+          '${player.getPos()}. ${user.getFirstName()}\t\t${user.getRange()} * $_inputPercentOfPersonalRate * $microMatchQnt = $matchBalls');
+      playerStarFees.putIfAbsent(user.getId(),
+          () => PlayerFee(id: user.getId(), startFee: matchBalls ?? 0));
     }
+
+    return playerStarFees;
   }
 
-  static void _prepareMatchOdds(Map<int, MatchPlayer> players) {
-    int matchBallsSum = players.values
+  static Map<int, IPlayer> _prepareMatchOdds(
+      Map<int, IPlayer> players, Map<String, PlayerFee> playerFees) {
+    int matchBallsSum = playerFees.values
         .map((player) => player.startFee)
-        .fold(0, (previousValue, element) => previousValue + element!);
+        .fold(0, (previousValue, element) => previousValue + element);
 
     debugPrint('Всего взносов: $matchBallsSum');
-
+    Map<int, IPlayer> updatePlayers = {};
     for (var kv in players.entries) {
-      MatchPlayer player = kv.value;
-      double atPercent = player.startFee! / matchBallsSum + 1;
-      player.matchBallsAsPercent = roundDouble(atPercent, 2);
+      IUser user = kv.value.getUser();
+      int startFee = playerFees[user.getId()]?.startFee ?? 0;
+      double atPercent =  startFee/ matchBallsSum + 1;
+      double matchBallsAsPercent = roundDouble(atPercent, 2);
+      PlayerFee playerFee = playerFees[user.getId()]!.copyWith(matchBallsAsPercent: matchBallsAsPercent);
+      IPlayer updates = kv.value.copyWith(playerFee: playerFee);
+      updatePlayers.putIfAbsent(updates.getPos(), () => updates);
     }
 
     MatchPlayer.matchBallsSum = matchBallsSum;
+
+    return updatePlayers;
   }
 
   static int? _fee(int matchesQnt, int range) {

@@ -1,7 +1,7 @@
 import 'package:rf_core/match/match_setup.dart';
 
-import '../i_player.dart';
-import 'match_player.dart';
+import '../model/i_player.dart';
+import '../model/match_player.dart';
 import 'match_utils.dart';
 import '../micro_match/micro_match_instance.dart';
 import '../micro_match/micro_match_triple.dart';
@@ -10,7 +10,7 @@ class MatchKeeper {
   int _currentMatchIndex = 0;
   int _totalMatches = 0;
 
-  late final Map<int, MatchPlayer> playersAtMatch = {};
+  late final Map<int, IPlayer> playersAtMatch;
   late final List<Map<String, List<int>>> _allMatches;
 
   final Map<int, int> playerMatchesPoints = {};
@@ -32,7 +32,7 @@ class MatchKeeper {
     }
 
     _allMatches = allMatches;
-    PlayerFeeCalculator.calculate(playersAtMatch);
+    playersAtMatch = PlayerFeeCalculator.prepareForStartingTourney(playersAtMatch);
   }
 
   MicroMatch? getNextMicroMatchPair() {
