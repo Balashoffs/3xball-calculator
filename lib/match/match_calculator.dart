@@ -1,8 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:rf_core/micro_match/micro_match.dart';
-import 'package:rf_core/model/player_fee.dart';
+import '../model/player_fee.dart';
 import 'match_utils.dart';
 import 'match_keeper.dart';
 
@@ -13,7 +11,7 @@ class MatchCalculator {
   final Map<int, int> _playerMatchesPoints;
 
   MatchCalculator(MatchKeeper keeper)
-      : _totalBalls = MatchPlayer.matchBallsSum!,
+      : _totalBalls = IPlayer.matchBallsSum!,
         _matchesResult = keeper.matchesResult,
         _playersAtMatch = keeper.playersAtMatch,
         _playerMatchesPoints = keeper.playerMatchesPoints;
@@ -43,7 +41,7 @@ class MatchCalculator {
       double fraction = newBallsD - endFee;
       PlayerFee playerFee = player.getPlayerFee()!;
       double endFraction = roundDouble(fraction, 2);
-      return  playerFee.copyWith(endFraction: endFraction, endFee: endFee);
+      return playerFee.copyWith(endFraction: endFraction, endFee: endFee);
     }).toList();
 
     int delta = checkOnChangeRange(players);
@@ -51,20 +49,30 @@ class MatchCalculator {
       players = addAdditionalFee(players, delta);
     }
 
-    List<IPlayer>? updatedPlayers = _playersAtMatch.values
-        .map((e) {
-      int deltaRange = e.getPlayerFee()?.startFee ?? 0 - e.getPlayerFee()!.endFee;
-      return e.copyWith(delta: deltaRange);
+    List<IPlayer>? updatedPlayers = _playersAtMatch.values.map((e) {
+      PlayerFee pf = players
+          .where((element) => element.getId() == e.getUser().getId())
+          .first;
+      int deltaRange =
+          pf.getStartFee() - pf.getEndFee();
+      debugPrint('${pf.getId()}: $deltaRange');
+      return e.copyWith(
+          delta: deltaRange,
+          playerFee: pf);
     }).toList();
-    updatedPlayers.sort((r1, r2) => (r2.getDeltaRange() + r2.getUser().getRange()) - (r1.getDeltaRange() + r1.getUser().getRange()));
+
+    for (var element in updatedPlayers) {debugPrint(element.toString());}
+    updatedPlayers.sort((r1, r2) =>
+        (r2.getDeltaRange() + r2.getUser().getRange()) -
+        (r1.getDeltaRange() + r1.getUser().getRange()));
     return updatedPlayers;
   }
 
   int checkOnChangeRange(List<PlayerFee> playersAtMatch) {
     int totalNewRange =
-        playersAtMatch.map((e) => e.endFee).fold(0, (p, c) => p + c);
+        playersAtMatch.map((e) => e.getEndFee()).fold(0, (p, c) => p + c);
     int totalOldRange =
-        playersAtMatch.map((e) => e.startFee).fold(0, (p, c) => p + c);
+        playersAtMatch.map((e) => e.getStartFee()).fold(0, (p, c) => p + c);
     return (totalNewRange - totalOldRange).abs();
   }
 

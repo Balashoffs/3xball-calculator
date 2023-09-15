@@ -21,8 +21,8 @@ class MicroMatch {
 
   List<int> getAllPosAtMicroMatch(){
     final List<int> allPlayerAtGame = [];
-    allPlayerAtGame.addAll(homeTriple.players.map((e) => e.getPos() as int).toList());
-    allPlayerAtGame.addAll(awayTriple.players.map((e) => e.getPos() as int).toList());
+    allPlayerAtGame.addAll(homeTriple.players.map((e) => e.getPos()).toList());
+    allPlayerAtGame.addAll(awayTriple.players.map((e) => e.getPos()).toList());
     return allPlayerAtGame;
   }
 

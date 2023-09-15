@@ -1,7 +1,6 @@
 import 'package:rf_core/match/match_setup.dart';
 
 import '../model/i_player.dart';
-import '../model/match_player.dart';
 import 'match_utils.dart';
 import '../micro_match/micro_match_instance.dart';
 import '../micro_match/micro_match_triple.dart';
@@ -10,7 +9,7 @@ class MatchKeeper {
   int _currentMatchIndex = 0;
   int _totalMatches = 0;
 
-  late final Map<int, IPlayer> playersAtMatch;
+  late final Map<int, IPlayer> playersAtMatch = {};
   late final List<Map<String, List<int>>> _allMatches;
 
   final Map<int, int> playerMatchesPoints = {};
@@ -21,10 +20,10 @@ class MatchKeeper {
     var playersMicroMatchQnt = calculatePlayersMicroMatchQnt(allMatches);
 
     players
-        .map((player) => (player as MatchPlayer).copyWith(
-            matchesQnt: playersMicroMatchQnt[player.getPos()]))
+        .map((player) => (player)
+            .copyWith(matchesQnt: playersMicroMatchQnt[player.getPos()]))
         .forEach((player) {
-      playersAtMatch[player.getPos()] = player;
+      playersAtMatch.putIfAbsent(player.getPos(), () => player);
     });
 
     for (var player in playersAtMatch.values) {
@@ -32,7 +31,9 @@ class MatchKeeper {
     }
 
     _allMatches = allMatches;
-    playersAtMatch = PlayerFeeCalculator.prepareForStartingTourney(playersAtMatch);
+    final Map<int, IPlayer> calculated =  PlayerFeeCalculator.prepareForStartingTourney(playersAtMatch);
+    playersAtMatch.updateAll((key, value) => calculated[key]!);
+
   }
 
   MicroMatch? getNextMicroMatchPair() {
@@ -41,26 +42,27 @@ class MatchKeeper {
       return null;
     }
     Map<String, List<int>> triples = _allMatches[_currentMatchIndex];
-    List<MatchPlayer> homes = _getTriples(triples['home'] ?? []) ;
+    List<IPlayer> homes = _getTriples(triples['home'] ?? []);
     MicroMatchTriple homeTriple = MicroMatchTriple('home', homes);
-    List<MatchPlayer> aways = _getTriples(triples['away'] ?? []);
+    List<IPlayer> aways = _getTriples(triples['away'] ?? []);
     MicroMatchTriple awayTriple = MicroMatchTriple('away', aways);
     _currentMatchIndex = nextIndex;
     return MicroMatch(homeTriple, awayTriple, _currentMatchIndex);
   }
 
-  List<MatchPlayer> _getTriples(List<int> pairs) {
-    return pairs.map((int e) => playersAtMatch[e] as MatchPlayer).toList();
+  List<IPlayer> _getTriples(List<int> pairs) {
+    return pairs.map((int e) => playersAtMatch[e] as IPlayer).toList();
   }
 
-   Map<int, int> updatePlayerPointAfterMatch(MicroMatch microMatch) {
+  Map<int, int> updatePlayerPointAfterMatch(MicroMatch microMatch) {
     int? points = microMatch.calculateWinPoints();
     if (points! == 1) {
       List<int> allPos = microMatch.getAllPosAtMicroMatch();
       for (var pos in allPos) {
         playerMatchesPoints.update(pos, (value) => value + points);
-        playersAtMatch.forEach((key, value) => value.setScore(1));
       }
+      playersAtMatch.updateAll(
+          (key, value) => value.copyWith(score: value.getScore() + 1));
     } else {
       points > 0
           ? _updateMatchPoints(microMatch.homeTriple, points)
@@ -77,7 +79,10 @@ class MatchKeeper {
     for (var player in triple.players) {
       points = points.abs();
       playerMatchesPoints.update(player.getPos(), (value) => value + points);
-      player.setScore(points);
+      playersAtMatch.update(
+        player.getPos(),
+        (value) => value.copyWith(score: value.getScore() + points),
+      );
     }
   }
 }

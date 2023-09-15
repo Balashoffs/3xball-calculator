@@ -1,9 +1,12 @@
-import 'player_fee.dart';
+import 'package:rf_core/model/player_fee.dart';
 
-abstract class IUser{
+abstract class IUser {
   String getId();
+
   String getFirstName();
+
   String getLastName();
+
   int getRange();
 
   IUser copyWith({
@@ -14,12 +17,19 @@ abstract class IUser{
   });
 }
 
-abstract class IPlayer{
+abstract class IPlayer {
+  static int? matchBallsSum;
+
   IUser getUser();
+
   PlayerFee? getPlayerFee();
+
   int getPos();
+
   int getMatchesQnt();
+
   int getScore();
+
   int getDeltaRange();
 
   IPlayer copyWith({

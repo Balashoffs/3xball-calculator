@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rf_core/model/i_player.dart';
 
-@visibleForTesting
 class User implements IUser {
   final String _id;
   final String _lastName;

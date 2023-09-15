@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:rf_core/model/i_player.dart';
 import 'package:rf_core/model/player_fee.dart';
 
-@visibleForTesting
+import 'user.dart';
+
 class MatchPlayer implements IPlayer {
   /// Всего взносов
-  static int? matchBallsSum;
 
   final IUser _user;
   final PlayerFee? _playerFee;
@@ -28,8 +27,7 @@ class MatchPlayer implements IPlayer {
     required int pos,
     required int matchesQnt,
     required int score,
-  })
-      : _playerFee = playerFee,
+  })  : _playerFee = playerFee,
         _user = user,
         _pos = pos,
         _matchesQnt = matchesQnt,
@@ -67,7 +65,7 @@ class MatchPlayer implements IPlayer {
   }
 
   @override
-  MatchPlayer copyWith({
+  IPlayer copyWith({
     IUser? user,
     PlayerFee? playerFee,
     int? pos,
@@ -80,6 +78,32 @@ class MatchPlayer implements IPlayer {
       pos: pos ?? _pos,
       matchesQnt: matchesQnt ?? _matchesQnt,
       score: score ?? _score,
-      playerFee: playerFee ?? _playerFee,);
+      playerFee: playerFee ?? _playerFee,
+      deltaRange: delta ?? _deltaRange,
+    );
+  }
+
+  static MatchPlayer create({
+    required String id,
+    required int pos,
+    required String lastName,
+    required String firstName,
+    required int rate,
+    required int matchesQnt,
+    required int score,
+  }) {
+    IUser user =
+        User(id: id, firstName: firstName, lastName: lastName, rate: rate);
+    return MatchPlayer(
+      user: user,
+      pos: pos,
+      matchesQnt: matchesQnt,
+      score: score,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'MatchPlayer{_user: $_user, _playerFee: $_playerFee, _pos: $_pos, _matchesQnt: $_matchesQnt, _score: $_score, _deltaRange: $_deltaRange}';
   }
 }

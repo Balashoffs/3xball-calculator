@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:rf_core/model/i_player.dart';
 import 'package:rf_core/match/match.dart';
-import 'package:rf_core/model/player_fee.dart';
+
+import '../model/player_fee.dart';
 
 class PlayerFeeCalculator {
   static const double _inputPercentOfPersonalRate = 0.02;
@@ -38,14 +39,14 @@ class PlayerFeeCalculator {
   static Map<int, IPlayer> _prepareMatchOdds(
       Map<int, IPlayer> players, Map<String, PlayerFee> playerFees) {
     int matchBallsSum = playerFees.values
-        .map((player) => player.startFee)
+        .map((player) => player.getStartFee())
         .fold(0, (previousValue, element) => previousValue + element);
 
     debugPrint('Всего взносов: $matchBallsSum');
     Map<int, IPlayer> updatePlayers = {};
     for (var kv in players.entries) {
       IUser user = kv.value.getUser();
-      int startFee = playerFees[user.getId()]?.startFee ?? 0;
+      int startFee = playerFees[user.getId()]?.getStartFee() ?? 0;
       double atPercent =  startFee/ matchBallsSum + 1;
       double matchBallsAsPercent = roundDouble(atPercent, 2);
       PlayerFee playerFee = playerFees[user.getId()]!.copyWith(matchBallsAsPercent: matchBallsAsPercent);
@@ -53,7 +54,7 @@ class PlayerFeeCalculator {
       updatePlayers.putIfAbsent(updates.getPos(), () => updates);
     }
 
-    MatchPlayer.matchBallsSum = matchBallsSum;
+    IPlayer.matchBallsSum = matchBallsSum;
 
     return updatePlayers;
   }
