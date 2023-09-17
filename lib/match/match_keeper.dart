@@ -62,7 +62,7 @@ class MatchKeeper {
         playerMatchesPoints.update(pos, (value) => value + points);
       }
       playersAtMatch.updateAll(
-          (key, value) => value.copyWith(score: value.getScore() + 1));
+          (key, value) => value.copyWith(score: value.getScore() + 1, matchesQnt: value.getMatchesQnt() + 1), );
     } else {
       points > 0
           ? _updateMatchPoints(microMatch.homeTriple, points)
@@ -81,7 +81,7 @@ class MatchKeeper {
       playerMatchesPoints.update(player.getPos(), (value) => value + points);
       playersAtMatch.update(
         player.getPos(),
-        (value) => value.copyWith(score: value.getScore() + points),
+        (value) => value.copyWith(score: value.getScore() + points, matchesQnt: value.getMatchesQnt() + 1),
       );
     }
   }
