@@ -38,7 +38,7 @@ class MatchKeeper {
 
   MicroMatch? getNextMicroMatchPair() {
     int nextIndex = _currentMatchIndex + 1;
-    if (_totalMatches  < nextIndex + 1) {
+    if (_totalMatches  < nextIndex) {
       return null;
     }
     Map<String, List<int>> triples = _allMatches[_currentMatchIndex];
