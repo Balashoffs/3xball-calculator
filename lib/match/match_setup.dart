@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:rf_core/model/i_player.dart';
+import 'package:rf_core/match/match.dart';
 
-import '../i_player.dart';
-import 'match_utils.dart';
+import '../model/player_fee.dart';
 
-class MatchSetup {
+class PlayerFeeCalculator {
   static const double _inputPercentOfPersonalRate = 0.02;
   static const Map<int, List<int>> _matchOdds = {
     6: [10, 10, 10, 10, 10, 10],
@@ -12,50 +13,58 @@ class MatchSetup {
     9: [10, 10, 10, 10, 10, 10, 10, 10, 10],
   };
 
-  List<PlayerMatchOdds> playersMatchOdds = [];
-  late final int matchBallsSum;
-  MatchSetup(List<IPlayer> players) {
-    _preparePlayerOdds(players);
-    _prepareMatchOdds();
+  static Map<int, IPlayer> prepareForStartingTourney(Map<int, IPlayer> players) {
+    Map<String, PlayerFee> playerFees = _preparePlayerOdds(players);
+    return _prepareMatchOdds(players, playerFees);
   }
 
-  void _preparePlayerOdds(List<IPlayer> players) {
+  static Map<String, PlayerFee> _preparePlayerOdds(Map<int, IPlayer> players) {
     List<int>? odds = _matchOdds[players.length];
-    for (var value in players) {
-      int microMatchQnt = odds![value.getPos()! - 1];
-      int? matchBalls = _fee(microMatchQnt, value.getRange()!);
+    Map<String, PlayerFee> playerStarFees = {};
+    for (var kv in players.entries) {
+      IPlayer player = kv.value;
+      int index = player.getPos() - 1;
+      IUser user = kv.value.getUser();
+      int microMatchQnt = odds![index];
+      int? matchBalls = _fee(microMatchQnt, player.getUser().getRange());
       debugPrint(
-          '${value.getPos()}. ${value.getFullName()}\t\t${value.getRange()} * $_inputPercentOfPersonalRate * $microMatchQnt = $matchBalls');
-      PlayerMatchOdds pmo = PlayerMatchOdds(value.getPos(), matchBalls);
-      playersMatchOdds.add(pmo);
+          '${player.getPos()}. ${user.getFirstName()}\t\t${user.getRange()} * $_inputPercentOfPersonalRate * $microMatchQnt = $matchBalls');
+      playerStarFees.putIfAbsent(user.getId(),
+          () => PlayerFee(id: user.getId(), startFee: matchBalls ?? 0));
     }
+
+    return playerStarFees;
   }
 
-  void _prepareMatchOdds() {
-    matchBallsSum = playersMatchOdds
-        .map((e) => e.matchBalls)
-        .fold(0, (previousValue, element) => previousValue + element!);
+  static Map<int, IPlayer> _prepareMatchOdds(
+      Map<int, IPlayer> players, Map<String, PlayerFee> playerFees) {
+    int matchBallsSum = playerFees.values
+        .map((player) => player.getStartFee())
+        .fold(0, (previousValue, element) => previousValue + element);
 
     debugPrint('Всего взносов: $matchBallsSum');
-
-    for (var playerOdds in playersMatchOdds) {
-      double atPercent = playerOdds.matchBalls! / matchBallsSum + 1;
-      playerOdds.matchBallsAsPercent = roundDouble(atPercent, 2);
+    Map<int, IPlayer> updatePlayers = {};
+    for (var kv in players.entries) {
+      IUser user = kv.value.getUser();
+      int startFee = playerFees[user.getId()]?.getStartFee() ?? 0;
+      double atPercent =  startFee/ matchBallsSum + 1;
+      double matchBallsAsPercent = roundDouble(atPercent, 2);
+      PlayerFee playerFee = playerFees[user.getId()]!.copyWith(matchBallsAsPercent: matchBallsAsPercent);
+      IPlayer updates = kv.value.copyWith(playerFee: playerFee);
+      updatePlayers.putIfAbsent(updates.getPos(), () => updates);
     }
+
+    IPlayer.matchBallsSum = matchBallsSum;
+
+    return updatePlayers;
   }
 
-  int? _fee(int matchesQnt, int range) {
+  static int? _fee(int matchesQnt, int range) {
     double fee = _inputPercentOfPersonalRate * matchesQnt * range;
-    double fraction = fee - fee.truncate();
-    int plusOne = fraction.compareTo(0.5) >= 0 ? 0 : 1;
-    return fraction.compareTo(0.0) != 0 ? fee.round() + plusOne : fee.round();
+    //Previous version of input balls
+    // double fraction = fee - fee.truncate();
+    // int plusOne = fraction.compareTo(0.5) >= 0 ? 0 : 1;
+    // return fraction.compareTo(0.0) != 0 ? fee.round() + plusOne : fee.round();
+    return fee.round();
   }
-}
-
-class PlayerMatchOdds {
-  final int? pos;
-  final int? matchBalls;
-  double? matchBallsAsPercent;
-
-  PlayerMatchOdds(this.pos, this.matchBalls);
 }

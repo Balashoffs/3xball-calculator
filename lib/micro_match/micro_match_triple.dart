@@ -1,5 +1,5 @@
 
-import '../i_player.dart';
+import '../model/i_player.dart';
 
 class MicroMatchTriple{
   final String side;
@@ -8,3 +8,4 @@ class MicroMatchTriple{
 
   MicroMatchTriple(this.side, this.players);
 }
+
