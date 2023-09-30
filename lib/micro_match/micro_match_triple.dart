@@ -8,3 +8,4 @@ class MicroMatchTriple{
 
   MicroMatchTriple(this.side, this.players);
 }
+

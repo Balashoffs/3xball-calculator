@@ -54,7 +54,7 @@ class MatchCalculator {
           .where((element) => element.getId() == e.getUser().getId())
           .first;
       int deltaRange =
-          pf.getStartFee() - pf.getEndFee();
+           pf.getEndFee() - pf.getStartFee();
       debugPrint('${pf.getId()}: $deltaRange');
       return e.copyWith(
           delta: deltaRange,
