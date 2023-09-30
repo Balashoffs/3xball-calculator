@@ -51,14 +51,10 @@ class MatchKeeper {
   Map<int, int> updatePlayerPointAfterMatch(MicroMatch microMatch) {
     int? points = microMatch.calculateWinPoints();
     if (points! == 1) {
-      List<int> allPos = microMatch.getAllPosAtMicroMatch();
-      for (var pos in allPos) {
-        playerMatchesPoints.update(pos, (value) => value + points);
-      }
-      playersAtMatch.updateAll(
-        (key, value) => value.copyWith(
-            score: value.getScore() + 1, matchesQnt: value.getMatchesQnt() + 1),
-      );
+      _updateMatchPoints(
+          microMatch.homeTriple, null, points);
+      _updateMatchPoints(
+          microMatch.awayTriple, null, points);
     } else {
       points > 0
           ? _updateMatchPoints(
@@ -74,24 +70,28 @@ class MatchKeeper {
   }
 
   void _updateMatchPoints(
-      MicroMatchTriple triple, MicroMatchTriple zeroTriple, int points) {
-    points = points.abs();
-    for (var player in triple.players) {
-      playerMatchesPoints.update(player.getPos(), (value) => value + points);
+      MicroMatchTriple? triple, MicroMatchTriple? zeroTriple, int points) {
+    points = points < 0 ? points.abs() : points;
+    if (triple != null) {
+      for (var player in triple.players) {
+        playerMatchesPoints.update(player.getPos(), (value) => value + points);
 
-      playersAtMatch.update(
-        player.getPos(),
-        (value) => value.copyWith(
-            score: value.getScore() + points,
-            matchesQnt: value.getMatchesQnt() + 1),
-      );
+        playersAtMatch.update(
+          player.getPos(),
+          (value) => value.copyWith(
+              score: value.getScore() + points,
+              matchesQnt: value.getMatchesQnt() + 1),
+        );
+      }
     }
 
-    for (var player in zeroTriple.players) {
-      playersAtMatch.update(
-        player.getPos(),
-        (value) => value.copyWith(matchesQnt: value.getMatchesQnt() + 1),
-      );
+    if (zeroTriple != null) {
+      for (var player in zeroTriple.players) {
+        playersAtMatch.update(
+          player.getPos(),
+          (value) => value.copyWith(matchesQnt: value.getMatchesQnt() + 1),
+        );
+      }
     }
   }
 }
