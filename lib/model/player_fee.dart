@@ -38,6 +38,7 @@ class PlayerFee {
     double? endFraction,
     double? matchBallsAsPercent,
   }) {
+    print(toString());
     return PlayerFee(
       id: id ?? _id,
       additionalFee: additionalFee ?? _additionalFee,
@@ -48,6 +49,11 @@ class PlayerFee {
     );
   }
 
+
+  @override
+  String toString() {
+    return 'PlayerFee{_id: $_id, _additionalFee: $_additionalFee, _startFee: $_startFee, _endFee: $_endFee, _endFraction: $_endFraction, _matchBallsAsPercent: $_matchBallsAsPercent}';
+  }
 
   @override
   bool operator ==(Object other) =>

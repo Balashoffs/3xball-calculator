@@ -45,9 +45,7 @@ class MatchCalculator {
     }).toList();
 
     int delta = checkOnChangeRange(players);
-    if (delta > 0) {
-      players = addAdditionalFee(players, delta);
-    }
+    print('delta: $delta');
 
     List<IPlayer>? updatedPlayers = _playersAtMatch.values.map((e) {
       PlayerFee pf = players
@@ -65,6 +63,14 @@ class MatchCalculator {
     updatedPlayers.sort((r1, r2) =>
         (r2.getDeltaRange() + r2.getUser().getRange()) -
         (r1.getDeltaRange() + r1.getUser().getRange()));
+
+    if (delta > 0) {
+      for(int i = 0; i < delta; i++){
+      IPlayer player = updatedPlayers[i];
+        updatedPlayers[i] = player.copyWith(delta: player.getDeltaRange() + 1);
+      }
+    }
+
     return updatedPlayers;
   }
 

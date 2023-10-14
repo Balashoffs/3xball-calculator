@@ -9,6 +9,19 @@ void main() {
     debugPrint("Расчет для 6 игроков");
 
 
+    // List<List<int>> microMatchResults = [
+    //   [2, 0],
+    //   [1, 2],
+    //   [1, 1],
+    //   [2, 0],
+    //   [0, 0],
+    //   [1, 2],
+    //   [2, 1],
+    //   [1, 2],
+    //   [0, 2],
+    //   [1, 2]
+    // ];
+
     List<List<int>> microMatchResults = [
       [2, 0],
       [1, 2],
