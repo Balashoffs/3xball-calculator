@@ -38,7 +38,6 @@ class PlayerFee {
     double? endFraction,
     double? matchBallsAsPercent,
   }) {
-    print(toString());
     return PlayerFee(
       id: id ?? _id,
       additionalFee: additionalFee ?? _additionalFee,

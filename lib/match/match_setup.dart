@@ -27,8 +27,6 @@ class PlayerFeeCalculator {
       IUser user = kv.value.getUser();
       int microMatchQnt = odds![index];
       int? matchBalls = _fee(microMatchQnt, player.getUser().getRange());
-      debugPrint(
-          '${player.getPos()}. ${user.getFirstName()}\t\t${user.getRange()} * $_inputPercentOfPersonalRate * $microMatchQnt = $matchBalls');
       playerStarFees.putIfAbsent(user.getId(),
           () => PlayerFee(id: user.getId(), startFee: matchBalls ?? 0));
     }
@@ -42,7 +40,6 @@ class PlayerFeeCalculator {
         .map((player) => player.getStartFee())
         .fold(0, (previousValue, element) => previousValue + element);
 
-    debugPrint('Всего взносов: $matchBallsSum');
     Map<int, IPlayer> updatePlayers = {};
     for (var kv in players.entries) {
       IUser user = kv.value.getUser();

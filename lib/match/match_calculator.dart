@@ -28,11 +28,8 @@ class MatchCalculator {
         .expand((element) => element)
         .toList()
         .fold(0, (previousValue, element) => previousValue! + element);
-    debugPrint('Всего очков: $totalPoints');
     double pointCost = _totalBalls / totalPoints!;
     pointCost = roundDouble(pointCost, 2);
-
-    debugPrint('Стоимость каждого очка $_totalBalls/$totalPoints = $pointCost');
 
     List<PlayerFee> players = _playersAtMatch.values.map((player) {
       int pos = player.getPos();
@@ -45,7 +42,6 @@ class MatchCalculator {
     }).toList();
 
     int delta = checkOnChangeRange(players);
-    print('delta: $delta');
 
     List<IPlayer>? updatedPlayers = _playersAtMatch.values.map((e) {
       PlayerFee pf = players
@@ -53,13 +49,11 @@ class MatchCalculator {
           .first;
       int deltaRange =
            pf.getEndFee() - pf.getStartFee();
-      debugPrint('${pf.getId()}: $deltaRange');
       return e.copyWith(
           delta: deltaRange,
           playerFee: pf);
     }).toList();
 
-    for (var element in updatedPlayers) {debugPrint(element.toString());}
     updatedPlayers.sort((r1, r2) =>
         (r2.getDeltaRange() + r2.getUser().getRange()) -
         (r1.getDeltaRange() + r1.getUser().getRange()));
@@ -85,11 +79,6 @@ class MatchCalculator {
   List<PlayerFee> addAdditionalFee(List<PlayerFee> playersAtMatch, int delta) {
     List<PlayerFee> updated =
         playersAtMatch.map((e) => e.copyWith(additionalFee: 1)).toList();
-    // updated.sort((a, b) {
-    //   double aD = a.endFraction;
-    //   double bD = b.endFraction;
-    //   return bD.compareTo(aD);
-    // });
     return updated;
   }
 }
